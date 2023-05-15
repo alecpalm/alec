@@ -15,7 +15,6 @@
         }
 
         body {
-            background-image: url(files/back.jpg);
             background-size: cover;
             background-repeat: no-repeat;
             margin: 0;
@@ -90,6 +89,17 @@
         }
 
     </style>
+        <script>
+        // Array of image filenames
+        var images = ['anthony-intraversato-kgWsdIjoG14-unsplash.jpg', 'atanas-malamov-tpmAv6c33dE-unsplash.jpg', 'back.jpg', 'cristofer-maximilian-srHTAuSUPQU-unsplash.jpg', 'derek-sears-7kh9KKPWBaQ-unsplash.jpg', 'karsten-winegeart-_m-Xjo9R_y4-unsplash.jpg', 'lance-reis-HG5YcnfPALI-unsplash.jpg', 'nik-shuliahin-o14RBhTPxnA-unsplash.jpg'];
+
+        // Select a random image from the array
+        var randomImage = images[Math.floor(Math.random() * images.length)];
+
+        // Set the background image of the body
+        document.body.style.backgroundImage = 'url(files/' + randomImage + ')';
+    </script>
+
 </head>
 <body>
     <div class="outline text-effect" data-text="Alec Palm"></div>
