@@ -132,6 +132,10 @@
             <button id="logoWhite" class="btn ghost selected" type="button">White</button>
             <button id="logoBlack" class="btn ghost" type="button">Black</button>
           </div>
+          <label>Left Logo URL (SBA)</label>
+          <input id="leftLogoUrl" type="url" placeholder="https://example.com/sba-logo.png">
+          <label>Right Logo URL (Lewis & Clark)</label>
+          <input id="rightLogoUrl" type="url" placeholder="https://example.com/lc-logo.png">
         </div>
 
         <div class="section">
@@ -236,13 +240,17 @@
       colors: { primary: '#65ab6f', accent: '#0066cc', heroText: '#ffffff' }, // customizable palette
       logos: {
         blue: {
-          left: 'email-stuff/sba-blue.png',
-          right: 'email-stuff/lewisclark-blue.png'
+          left: '', // Upload sba-blue.png to a public hosting service and paste URL here
+          right: '' // Upload lewisclark-blue.png to a public hosting service and paste URL here
         },
         white: {
-          left: 'email-stuff/sba-white.png',
-          right: 'email-stuff/lewisclark-white.png'
+          left: '', // Upload sba-white.png to a public hosting service and paste URL here
+          right: '' // Upload lewisclark-white.png to a public hosting service and paste URL here
         }
+      },
+      customLogos: {
+        left: '',
+        right: ''
       },
       logoVariant: 'white',
       hero: {
@@ -334,6 +342,10 @@
 
       const logos = s.logos[s.logoVariant === 'black' ? 'white' : s.logoVariant] || s.logos.white;
       const logoClass = s.logoVariant === 'black' ? 'logo-black' : '';
+      
+      // Use custom URLs if provided, otherwise fall back to preset logos
+      const leftLogo = s.customLogos.left || logos.left;
+      const rightLogo = s.customLogos.right || logos.right;
       const doc = `<!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -341,13 +353,16 @@
 <style>.logo-black{filter: invert(1) brightness(0.8)}</style>
 </head>
 <body style="font-family: 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f6f6f6;">
-  ${s.hero.preheader ? `<div style="color: transparent; font-size: 0px; line-height: 0px; max-height: 0px; overflow: hidden;">${s.hero.preheader} | </div>` : ''}
+  ${s.hero.preheader ? `<!--[if !mso]><!-->
+<div style="display: none; max-height: 0; overflow: hidden; mso-hide: all; font-size: 1px; color: #ffffff; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden;">${s.hero.preheader}</div>
+<!--<![endif]-->
+<div style="color: transparent; font-size: 0px; line-height: 0px; max-height: 0px; overflow: hidden; mso-hide: all;">${s.hero.preheader}</div>` : ''}
   <div style="max-width: 640px; margin: 20px auto; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); overflow: hidden;">
     <div style="text-align: center; padding: 10px 15px; background: ${headerBg}; color: #ffffff; border-radius: 8px 8px 0 0; border-bottom: 4px solid ${primaryDark};">
       <div style="text-align: center; padding: 8px 0;">
-        ${logos.left ? `<img src="${escapeAttr(logos.left)}" alt="Left Logo" class="${logoClass}" style="max-height: 55px; display: inline-block; vertical-align: middle;">` : ''}
+        ${leftLogo ? `<img src="${escapeAttr(leftLogo)}" alt="SBA Logo" class="${logoClass}" style="max-height: 55px; display: inline-block; vertical-align: middle;">` : ''}
         <span style="display: inline-block; width: 2px; height: 35px; background-color: rgba(255, 255, 255, 0.85); margin: 0 20px; vertical-align: middle;"></span>
-        ${logos.right ? `<img src="${escapeAttr(logos.right)}" alt="Right Logo" class="${logoClass}" style="max-height: 55px; display: inline-block; vertical-align: middle;">` : ''}
+        ${rightLogo ? `<img src="${escapeAttr(rightLogo)}" alt="LC Logo" class="${logoClass}" style="max-height: 55px; display: inline-block; vertical-align: middle;">` : ''}
       </div>
       <h1 style="margin: 8px 0 3px 0; font-size: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; line-height: 1.2; color: ${s.colors.heroText};">
         <span>${s.hero.headline}</span>
@@ -405,6 +420,9 @@
       document.getElementById('headlineEditor').innerHTML = state.hero.headline;
       document.getElementById('subheadlineEditor').innerHTML = state.hero.subheadline;
       el('preheader').value = state.hero.preheader;
+      // Custom logos
+      el('leftLogoUrl').value = state.customLogos.left;
+      el('rightLogoUrl').value = state.customLogos.right;
       // Updates RTE
       document.getElementById('updatesEditor').innerHTML = state.updatesHtml || '';
       // Signature RTE
@@ -486,6 +504,9 @@
       document.getElementById('headlineEditor').addEventListener('input', e=>{ state.hero.headline=e.target.innerHTML; render(); });
       document.getElementById('subheadlineEditor').addEventListener('input', e=>{ state.hero.subheadline=e.target.innerHTML; render(); });
       el('preheader').addEventListener('input', e=>{ state.hero.preheader=e.target.value; render(); });
+      // Custom logo URLs
+      el('leftLogoUrl').addEventListener('input', e=>{ state.customLogos.left=e.target.value; render(); });
+      el('rightLogoUrl').addEventListener('input', e=>{ state.customLogos.right=e.target.value; render(); });
       document.getElementById('updatesEditor').addEventListener('input', e=>{ state.updatesHtml = e.target.innerHTML; render(); });
       document.getElementById('signatureEditor').addEventListener('input', e=>{ state.signature = e.target.innerHTML; render(); });
       el('clearUpdates').addEventListener('click', ()=>{ state.updatesHtml = ''; syncInputs(); render(); });
