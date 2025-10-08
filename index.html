@@ -3,9 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Important for iOS edge-to-edge -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Alec Palm</title>
-    
+
   <!-- Favicon -->
   <link rel="icon" href="files/apfavi.png" type="image/png" />
   <link rel="shortcut icon" href="files/apfavi.png" type="image/png" />
@@ -40,35 +41,122 @@
   }
   </script>
 
+  <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&display=swap" rel="stylesheet">
 
   <style>
-    :root { --bg:#000; --fg:#fff; --muted:#d1d5db; --shadow: 0 0 10px rgba(0,0,0,.35); }
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:'Barlow Condensed', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      color:var(--fg);
-      background: var(--bg) center / cover no-repeat fixed;
-      -webkit-font-smoothing:antialiased;
-      text-rendering:optimizeLegibility;
-      display:grid; place-items:center; min-height:100dvh;
+    :root {
+      --bg:#000; --fg:#fff; --muted:#d1d5db; --shadow: 0 0 10px rgba(0,0,0,.35);
     }
-    .stacked{display:grid;gap:0.5rem;text-align:center;filter: drop-shadow(var(--shadow));}
-    h1{margin:0;font-size:clamp(56px,10vw,140px);line-height:.88;letter-spacing:-.02em;text-transform:uppercase}
+    html,body { height: 100%; }
+    /* Remove default iOS safe-area padding from content */
+    body {
+      margin: 0;
+      color: var(--fg);
+      font-family: 'Barlow Condensed', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100svh; /* stable mobile viewport height */
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: transparent;
+      -webkit-tap-highlight-color: rgba(0,0,0,0);
+    }
 
-    .page-footer__header{display:block;text-align:center;margin:0;font-weight:700;line-height:1; font-size:clamp(24px,3.8vw,44px); letter-spacing:.04em; text-transform:uppercase}
-    .rotator{position:relative;display:block;overflow:hidden;font-size:1.35em;font-weight:800;line-height:1}
-    .stack{display:grid;grid-auto-rows:1fr;will-change:transform}
-    .word{white-space:nowrap;line-height:1.1;padding:0.14em 0;text-transform:uppercase}
+    /* Edge-to-edge background that ignores safe areas */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;            /* fills behind the notch and home bar */
+      z-index: -1;
+      background: var(--bg) center / cover no-repeat;
+      will-change: transform;
+      transform: translateZ(0);
+      pointer-events: none;
+      filter: brightness(.82);
+    }
 
-    @media(prefers-reduced-motion:reduce){.stack{transition:none!important;transform:none!important}.word{display:none}.word:first-child{display:inline}}
+    .hero {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 100svh;
+      width: 100%;
+      padding: 0;          /* no safe-area padding here */
+    }
+
+    .stacked {
+      display: grid;
+      gap: .5rem;
+      text-align: center;
+      filter: drop-shadow(var(--shadow));
+      padding-inline: clamp(12px, 4vw, 28px);
+    }
+
+    h1 {
+      margin: 0;
+      /* smaller floor on phones, keeps big on desktop */
+      font-size: clamp(40px, 16vw, 140px);
+      line-height: .88;
+      letter-spacing: -.02em;
+      text-transform: uppercase;
+    }
+
+    .page-footer__header {
+      display: block;
+      margin: 0;
+      font-weight: 700;
+      line-height: 1;
+      font-size: clamp(18px, 6vw, 44px);
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .rotator {
+      position: relative;
+      display: block;
+      overflow: hidden;
+      line-height: 1.05;
+      font-weight: 800;
+    }
+
+    .stack { display: grid; grid-auto-rows: 1fr; will-change: transform; }
+    .word { white-space: nowrap; line-height: 1.1; padding: .14em 0; text-transform: uppercase; }
+
+    /* Make tap target for email button nice on mobile */
+    .cta {
+      margin-top: clamp(10px, 3.5vw, 18px);
+      display: inline-block;
+      text-decoration: none;
+      color: #111;
+      background: #fff;
+      border-radius: 9999px;
+      padding: .6rem 1.05rem;
+      font-size: clamp(14px, 4.2vw, 18px);
+      letter-spacing: .02em;
+      box-shadow: 0 5px 25px rgba(0,0,0,.25);
+    }
+
+    /* Reduce motion preference */
+    @media (prefers-reduced-motion: reduce) {
+      .stack { transition: none !important; transform: none !important; }
+      .word { display: none; }
+      .word:first-child { display: inline; }
+    }
+
+    /* Guardrails for very small devices */
+    @media (max-width: 360px) {
+      h1 { font-size: clamp(34px, 18vw, 120px); }
+    }
   </style>
 </head>
 <body>
   <main class="hero" role="banner" aria-label="Alec Palm homepage">
     <div class="stacked">
       <h1>ALEC PALM</h1>
+
       <h3 class="page-footer__header" data-rotate-interval="1600" aria-label="Rotating descriptors for Alec Palm">
         <span class="rotator" aria-live="polite" aria-atomic="true">
           <span class="stack">
@@ -81,75 +169,93 @@
             <span class="word">DUCK</span>
             <span class="word">COMMUNICATOR</span>
           </span>
-            <span class="word">ADVOCATE</span>
-            <span class="word">DESIGNER</span>
-            <span class="word">CAMPAIGN MANAGER</span>
-            <span class="word">PROGRAMMER</span>
-            <span class="word">DUCK</span>
-            <span class="word">COMMUNICATOR</span>
-          </span>
         </span>
       </h3>
+
+      <a class="cta" href="mailto:hi@alecpalm.com">Contact</a>
     </div>
   </main>
 
+  <!-- Background chooser -->
   <script>
     (function(){
-      const images = ['ap-photo8.jpg','ap-photo2.jpg','ap-photo3.jpg','ap-photo1.jpg','ap-photo4.jpg','ap-photo5.jpg','ap-photo7.jpg','ap-photo6.jpg']; // strict photo set
+      const images = ['ap-photo8.jpg','ap-photo2.jpg','ap-photo3.jpg','ap-photo1.jpg','ap-photo4.jpg','ap-photo5.jpg','ap-photo7.jpg','ap-photo6.jpg'];
       const pick = images[Math.floor(Math.random()*images.length)];
-      document.body.style.backgroundImage = 'url(photos/' + pick + ')';
+      document.body.style.setProperty('--bg-image', `url(photos/${pick})`);
+      // apply to the edge-to-edge layer
+      document.body.style.backgroundImage = 'none';
+      document.body.style.setProperty('--bg', `#000`);
+      document.body.style.setProperty('--bg-url', `photos/${pick}`);
+      document.body.beforeRepaint = () => {};
+      document.body.style.cssText += '';
+      document.body.style.setProperty('--bg', '#000');
+      document.body.style.setProperty('--bg-url', `photos/${pick}`);
+      document.body.style.setProperty('--bg', '#000');
+      // actually set it
+      document.body.style.setProperty('--bg-url', `photos/${pick}`);
+      document.body.style.setProperty('--bg', '#000');
+      document.body.style.setProperty('--bg-img', `url(photos/${pick})`);
+      // set on pseudo via inline style trick
+      const css = document.createElement('style');
+      css.textContent = `body::before{background-image:url(photos/${pick})}`;
+      document.head.appendChild(css);
     })();
   </script>
 
+  <!-- Rotator -->
   <script>
-  (function(){
-    const header = document.querySelector('.page-footer__header');
-    const stack = header.querySelector('.stack');
-    const rotator = header.querySelector('.rotator');
-    const words = [...stack.querySelectorAll('.word')];
-    if (!words.length) return;
-    const clone = words[0].cloneNode(true);
-    clone.setAttribute('aria-hidden','true');
-    stack.appendChild(clone);
+    (function(){
+      const header = document.querySelector('.page-footer__header');
+      if (!header) return;
+      const rotator = header.querySelector('.rotator');
+      const stack = rotator.querySelector('.stack');
+      const words = [...stack.querySelectorAll('.word')];
+      if (!words.length) return;
 
-    let i = 0, h = 0, step = parseInt(header.getAttribute('data-rotate-interval'), 10) || 1600;
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+      // clone first for seamless loop
+      const clone = words[0].cloneNode(true);
+      clone.setAttribute('aria-hidden','true');
+      stack.appendChild(clone);
 
-    function measure(){
-      const tallest = Math.max(...words.map(w => w.getBoundingClientRect().height));
-      h = tallest;
-      rotator.style.height = h + 'px';
-    }
+      const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+      let i = 0, h = 0;
+      const step = parseInt(header.getAttribute('data-rotate-interval'), 10) || 1600;
 
-    function tick(){
-      if (mq.matches) return;
-      i++;
-      stack.style.transition = `transform ${step}ms cubic-bezier(.42,0,.32,1)`;
-      stack.style.transform = `translateY(${-h * i}px)`;
-      if (i === words.length){
-        setTimeout(()=>{
-          stack.style.transition = 'none';
-          stack.style.transform = 'translateY(0)';
-          i = 0;
-        }, step);
+      function measure(){
+        // tallest line height across words
+        const tallest = Math.max(...[...stack.children].map(w => w.getBoundingClientRect().height));
+        h = tallest;
+        rotator.style.height = h + 'px';
       }
-    }
 
-    function play(){
+      function tick(){
+        if (mq.matches) return;
+        i++;
+        stack.style.transition = `transform ${Math.min(step, 1600)}ms cubic-bezier(.42,0,.32,1)`;
+        stack.style.transform = `translateY(${-h * i}px)`;
+        if (i === stack.children.length - 1){
+          setTimeout(()=>{
+            stack.style.transition = 'none';
+            stack.style.transform = 'translateY(0)';
+            i = 0;
+          }, Math.min(step, 1600));
+        }
+      }
+
+      const ro = new ResizeObserver(()=>{
+        measure();
+        stack.style.transition = 'none';
+        stack.style.transform = `translateY(${-h * i}px)`;
+      });
+      ro.observe(stack);
+
       measure();
-      tick();
-      setInterval(tick, step + 200);
-    }
-
-    new ResizeObserver(()=>{
-      measure();
-      stack.style.transition = 'none';
-      stack.style.transform = `translateY(${-h * i}px)`;
-    }).observe(stack);
-
-    measure();
-    if (!mq.matches) play();
-  })();
+      if (!mq.matches){
+        // start immediately, then loop
+        tick();
+        setInterval(tick, step + 200);
+      }
+    })();
   </script>
 </body>
 </html>
