@@ -1,114 +1,155 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Alec Palm is a dedicated student, advocate, and proud Oregonian. Learn more about Alec's work and contributions.">
-    <link rel="icon" href="files/apfavi.png" type="image/x-icon">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alec Palm</title>
+    
+  <!-- Favicon -->
+  <link rel="icon" href="files/apfavi.png" type="image/png" />
+  <link rel="shortcut icon" href="files/apfavi.png" type="image/png" />
 
-    <title>Alec Palm</title>
-    <style>
-        @font-face {
-            font-family: 'Trade';
-            src: url('files/TradeGothicNextLTProHv.ttf') format('truetype');
-        }
+  <!-- SEO -->
+  <meta name="description" content="Alec Palm is a dedicated student, advocate, and proud Oregonian. Learn more about Alec's work and contributions." />
+  <link rel="canonical" href="https://alecpalm.com/" />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#0a0a0a" />
 
-        body {
-            background-size: cover;
-            background-repeat: no-repeat;
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Trade';
-        }
-        
-        .text-effect {
-            filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.3)); /* Add shadow blur */
-        }
-        
-        .outline {
-            position: relative;
-            font-size: 10rem;
-            font-weight: bold;
-            color: transparent; /* Transparent color to hide the fill */
-            -webkit-text-stroke: 6px white; /* Outline style */
-            text-shadow: none; /* Remove shadow effect */
-            white-space: nowrap;
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Alec Palm" />
+  <meta property="og:description" content="Alec Palm is a dedicated student, advocate, and proud Oregonian." />
+  <meta property="og:url" content="https://alecpalm.com/" />
+  <meta property="og:image" content="photos/ap-photo1.jpg" />
 
-        }
-        
-        .outline::before {
-            content: attr(data-text);
-            color: transparent; /* Transparent color to hide the fill */
-        }
-        
-        .subheader {
-            font-size: 2rem;
-            font-weight: bold;
-            color: white;
-            margin-top: 0.2rem; /* Adjust the margin value to decrease line spacing */
-        }
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Alec Palm" />
+  <meta name="twitter:description" content="Alec Palm is a dedicated student, advocate, and proud Oregonian." />
+  <meta name="twitter:image" content="photos/ap-photo1.jpg" />
 
-        a {
-            text-decoration: none;
-            color: white;
-            border-radius: 100px;
-            padding: 17px 25px 18.7px;
-            border: 3px solid white;
-            margin-top: 15px;
-            font-size: 1.3rem !important; /* Increase the font size and override with !important */
-            transition: background-color 0.3s, color 0.3s;
-        }
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Alec Palm",
+    "jobTitle": "Law Student",
+    "address": {"@type":"PostalAddress","addressRegion":"OR"}
+  }
+  </script>
 
-        a:hover {
-            background-color: white;
-            color: black;
-        }
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&display=swap" rel="stylesheet">
 
-        @media (max-width: 767px) {
-            body {
-                background-repeat: no-repeat;
-            }
-            
-            .outline {
-                font-size: 4.5rem;
-                -webkit-text-stroke: 3px white;
-                            letter-spacing:3px;
-            }
-            
-            .subheader {
-                font-size: 1.5rem;
-            }
+  <style>
+    :root { --bg:#000; --fg:#fff; --muted:#d1d5db; --shadow: 0 0 10px rgba(0,0,0,.35); }
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:'Barlow Condensed', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color:var(--fg);
+      background: var(--bg) center / cover no-repeat fixed;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+      display:grid; place-items:center; min-height:100dvh;
+    }
+    .stacked{display:grid;gap:0.5rem;text-align:center;filter: drop-shadow(var(--shadow));}
+    h1{margin:0;font-size:clamp(56px,10vw,140px);line-height:.88;letter-spacing:-.02em;text-transform:uppercase}
 
-            a {
-                padding: 12px 20px 13.7px;
-                font-size: 1rem !important;
-            }
-        }
+    .page-footer__header{display:block;text-align:center;margin:0;font-weight:700;line-height:1; font-size:clamp(24px,3.8vw,44px); letter-spacing:.04em; text-transform:uppercase}
+    .rotator{position:relative;display:block;overflow:hidden;font-size:1.35em;font-weight:800;line-height:1}
+    .stack{display:grid;grid-auto-rows:1fr;will-change:transform}
+    .word{white-space:nowrap;line-height:1.1;padding:0.14em 0;text-transform:uppercase}
 
-    </style>
-<script>
-    window.onload = function() {
-        // Array of image filenames
-var images = ['ap-photo8.jpg', 'ap-photo2.jpg', 'ap-photo3.jpg', 'ap-photo1.jpg', 'ap-photo4.jpg', 'ap-photo5.jpg', 'ap-photo7.jpg', 'ap-photo6.jpg'];
-
-        // Select a random image from the array
-        var randomImage = images[Math.floor(Math.random() * images.length)];
-
-        // Set the background image of the body
-document.body.style.backgroundImage = 'url(photos/' + randomImage + ')';
-
-
-
-    };
-</script>
-
+    @media(prefers-reduced-motion:reduce){.stack{transition:none!important;transform:none!important}.word{display:none}.word:first-child{display:inline}}
+  </style>
 </head>
 <body>
-    <div class="outline text-effect" data-text="Alec Palm"></div>
+  <main class="hero" role="banner" aria-label="Alec Palm homepage">
+    <div class="stacked">
+      <h1>ALEC PALM</h1>
+      <h3 class="page-footer__header" data-rotate-interval="1600" aria-label="Rotating descriptors for Alec Palm">
+        <span class="rotator" aria-live="polite" aria-atomic="true">
+          <span class="stack">
+            <span class="word">LAW STUDENT</span>
+            <span class="word">ADVOCATE</span>
+            <span class="word">OREGONIAN</span>
+            <span class="word">DESIGNER</span>
+            <span class="word">CAMPAIGN MANAGER</span>
+            <span class="word">PROGRAMMER</span>
+            <span class="word">DUCK</span>
+            <span class="word">COMMUNICATOR</span>
+          </span>
+            <span class="word">ADVOCATE</span>
+            <span class="word">DESIGNER</span>
+            <span class="word">CAMPAIGN MANAGER</span>
+            <span class="word">PROGRAMMER</span>
+            <span class="word">DUCK</span>
+            <span class="word">COMMUNICATOR</span>
+          </span>
+        </span>
+      </h3>
+    </div>
+  </main>
+
+  <script>
+    (function(){
+      const images = ['ap-photo8.jpg','ap-photo2.jpg','ap-photo3.jpg','ap-photo1.jpg','ap-photo4.jpg','ap-photo5.jpg','ap-photo7.jpg','ap-photo6.jpg']; // strict photo set
+      const pick = images[Math.floor(Math.random()*images.length)];
+      document.body.style.backgroundImage = 'url(photos/' + pick + ')';
+    })();
+  </script>
+
+  <script>
+  (function(){
+    const header = document.querySelector('.page-footer__header');
+    const stack = header.querySelector('.stack');
+    const rotator = header.querySelector('.rotator');
+    const words = [...stack.querySelectorAll('.word')];
+    if (!words.length) return;
+    const clone = words[0].cloneNode(true);
+    clone.setAttribute('aria-hidden','true');
+    stack.appendChild(clone);
+
+    let i = 0, h = 0, step = parseInt(header.getAttribute('data-rotate-interval'), 10) || 1600;
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    function measure(){
+      const tallest = Math.max(...words.map(w => w.getBoundingClientRect().height));
+      h = tallest;
+      rotator.style.height = h + 'px';
+    }
+
+    function tick(){
+      if (mq.matches) return;
+      i++;
+      stack.style.transition = `transform ${step}ms cubic-bezier(.42,0,.32,1)`;
+      stack.style.transform = `translateY(${-h * i}px)`;
+      if (i === words.length){
+        setTimeout(()=>{
+          stack.style.transition = 'none';
+          stack.style.transform = 'translateY(0)';
+          i = 0;
+        }, step);
+      }
+    }
+
+    function play(){
+      measure();
+      tick();
+      setInterval(tick, step + 200);
+    }
+
+    new ResizeObserver(()=>{
+      measure();
+      stack.style.transition = 'none';
+      stack.style.transform = `translateY(${-h * i}px)`;
+    }).observe(stack);
+
+    measure();
+    if (!mq.matches) play();
+  })();
+  </script>
 </body>
 </html>
