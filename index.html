@@ -3,34 +3,28 @@
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <!-- Important for iOS edge-to-edge -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Alec Palm</title>
 
-  <!-- Favicon -->
   <link rel="icon" href="files/apfavi.png" type="image/png" />
   <link rel="shortcut icon" href="files/apfavi.png" type="image/png" />
 
-  <!-- SEO -->
   <meta name="description" content="Alec Palm is a dedicated student, advocate, and proud Oregonian. Learn more about Alec's work and contributions." />
   <link rel="canonical" href="https://alecpalm.com/" />
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#0a0a0a" />
 
-  <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Alec Palm" />
   <meta property="og:description" content="Alec Palm is a dedicated student, advocate, and proud Oregonian." />
   <meta property="og:url" content="https://alecpalm.com/" />
   <meta property="og:image" content="photos/ap-photo1.jpg" />
 
-  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Alec Palm" />
   <meta name="twitter:description" content="Alec Palm is a dedicated student, advocate, and proud Oregonian." />
   <meta name="twitter:image" content="photos/ap-photo1.jpg" />
 
-  <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -41,34 +35,27 @@
   }
   </script>
 
-  <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&display=swap" rel="stylesheet">
 
   <style>
-    :root {
-      --bg:#000; --fg:#fff; --muted:#d1d5db; --shadow: 0 0 10px rgba(0,0,0,.35);
-    }
+    :root { --bg:#000; --fg:#fff; --shadow: 0 0 10px rgba(0,0,0,.35); }
     html,body { height: 100%; }
-    /* Remove default iOS safe-area padding from content */
     body {
       margin: 0;
       color: var(--fg);
       font-family: 'Barlow Condensed', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
-      min-height: 100svh; /* stable mobile viewport height */
+      min-height: 100svh;
       display: grid;
       place-items: center;
       overflow: hidden;
       background: transparent;
-      -webkit-tap-highlight-color: rgba(0,0,0,0);
     }
-
-    /* Edge-to-edge background that ignores safe areas */
     body::before {
       content: "";
       position: fixed;
-      inset: 0;            /* fills behind the notch and home bar */
+      inset: 0;
       z-index: -1;
       background: var(--bg) center / cover no-repeat;
       will-change: transform;
@@ -76,16 +63,12 @@
       pointer-events: none;
       filter: brightness(.82);
     }
-
     .hero {
-      position: relative;
       display: grid;
       place-items: center;
       min-height: 100svh;
       width: 100%;
-      padding: 0;          /* no safe-area padding here */
     }
-
     .stacked {
       display: grid;
       gap: .5rem;
@@ -93,18 +76,14 @@
       filter: drop-shadow(var(--shadow));
       padding-inline: clamp(12px, 4vw, 28px);
     }
-
     h1 {
       margin: 0;
-      /* smaller floor on phones, keeps big on desktop */
       font-size: clamp(40px, 16vw, 140px);
       line-height: .88;
       letter-spacing: -.02em;
       text-transform: uppercase;
     }
-
     .page-footer__header {
-      display: block;
       margin: 0;
       font-weight: 700;
       line-height: 1;
@@ -113,7 +92,6 @@
       text-transform: uppercase;
       text-align: center;
     }
-
     .rotator {
       position: relative;
       display: block;
@@ -121,32 +99,13 @@
       line-height: 1.05;
       font-weight: 800;
     }
-
     .stack { display: grid; grid-auto-rows: 1fr; will-change: transform; }
     .word { white-space: nowrap; line-height: 1.1; padding: .14em 0; text-transform: uppercase; }
-
-    /* Make tap target for email button nice on mobile */
-    .cta {
-      margin-top: clamp(10px, 3.5vw, 18px);
-      display: inline-block;
-      text-decoration: none;
-      color: #111;
-      background: #fff;
-      border-radius: 9999px;
-      padding: .6rem 1.05rem;
-      font-size: clamp(14px, 4.2vw, 18px);
-      letter-spacing: .02em;
-      box-shadow: 0 5px 25px rgba(0,0,0,.25);
-    }
-
-    /* Reduce motion preference */
     @media (prefers-reduced-motion: reduce) {
       .stack { transition: none !important; transform: none !important; }
       .word { display: none; }
       .word:first-child { display: inline; }
     }
-
-    /* Guardrails for very small devices */
     @media (max-width: 360px) {
       h1 { font-size: clamp(34px, 18vw, 120px); }
     }
@@ -156,7 +115,6 @@
   <main class="hero" role="banner" aria-label="Alec Palm homepage">
     <div class="stacked">
       <h1>ALEC PALM</h1>
-
       <h3 class="page-footer__header" data-rotate-interval="1600" aria-label="Rotating descriptors for Alec Palm">
         <span class="rotator" aria-live="polite" aria-atomic="true">
           <span class="stack">
@@ -171,38 +129,19 @@
           </span>
         </span>
       </h3>
-
-      <a class="cta" href="mailto:hi@alecpalm.com">Contact</a>
     </div>
   </main>
 
-  <!-- Background chooser -->
   <script>
     (function(){
       const images = ['ap-photo8.jpg','ap-photo2.jpg','ap-photo3.jpg','ap-photo1.jpg','ap-photo4.jpg','ap-photo5.jpg','ap-photo7.jpg','ap-photo6.jpg'];
       const pick = images[Math.floor(Math.random()*images.length)];
-      document.body.style.setProperty('--bg-image', `url(photos/${pick})`);
-      // apply to the edge-to-edge layer
-      document.body.style.backgroundImage = 'none';
-      document.body.style.setProperty('--bg', `#000`);
-      document.body.style.setProperty('--bg-url', `photos/${pick}`);
-      document.body.beforeRepaint = () => {};
-      document.body.style.cssText += '';
-      document.body.style.setProperty('--bg', '#000');
-      document.body.style.setProperty('--bg-url', `photos/${pick}`);
-      document.body.style.setProperty('--bg', '#000');
-      // actually set it
-      document.body.style.setProperty('--bg-url', `photos/${pick}`);
-      document.body.style.setProperty('--bg', '#000');
-      document.body.style.setProperty('--bg-img', `url(photos/${pick})`);
-      // set on pseudo via inline style trick
       const css = document.createElement('style');
       css.textContent = `body::before{background-image:url(photos/${pick})}`;
       document.head.appendChild(css);
     })();
   </script>
 
-  <!-- Rotator -->
   <script>
     (function(){
       const header = document.querySelector('.page-footer__header');
@@ -212,7 +151,6 @@
       const words = [...stack.querySelectorAll('.word')];
       if (!words.length) return;
 
-      // clone first for seamless loop
       const clone = words[0].cloneNode(true);
       clone.setAttribute('aria-hidden','true');
       stack.appendChild(clone);
@@ -222,7 +160,6 @@
       const step = parseInt(header.getAttribute('data-rotate-interval'), 10) || 1600;
 
       function measure(){
-        // tallest line height across words
         const tallest = Math.max(...[...stack.children].map(w => w.getBoundingClientRect().height));
         h = tallest;
         rotator.style.height = h + 'px';
@@ -242,16 +179,14 @@
         }
       }
 
-      const ro = new ResizeObserver(()=>{
+      new ResizeObserver(()=>{
         measure();
         stack.style.transition = 'none';
         stack.style.transform = `translateY(${-h * i}px)`;
-      });
-      ro.observe(stack);
+      }).observe(stack);
 
       measure();
       if (!mq.matches){
-        // start immediately, then loop
         tick();
         setInterval(tick, step + 200);
       }
