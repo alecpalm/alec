@@ -232,6 +232,9 @@
 
   <script>
     const el = id => document.getElementById(id);
+    // Global variables for RTE toolbar functionality
+    let lastFocusedRTE = null;
+    let savedSelection = null;
     const state = {
       colors: { primary: '#65ab6f', accent: '#0066cc', heroText: '#ffffff' }, // customizable palette
       logos: {
@@ -252,8 +255,8 @@
       },
       updatesHtml: '<ul><li>Excused absences available for illness - contact Dean Libby Davis</li><li>Report accessibility concerns through DALSA or student reps</li><li>Pod event funding available - share your ideas!</li></ul>',
       sections: [
-        { title: '', body: `Welcome to the Orange Pod! We're your SBA representatives and we're here to support you throughout the year. Feel free to reach out with any questions or concerns.`, showTitle: false },
-        { title: 'Health & Safety Update', body: `We're monitoring campus health concerns and have expanded excused absence options. If you're unwell, contact Dean Libby Davis to request an <a href=\"https://law.lclark.edu/live/forms/1833-excused-absence-request-form\">excused absence</a>.`, showTitle: true },
+        { title: '', body: `Welcome to the Orange Pod! We're your SBA representatives and we're here to support you throughout the year. Feel free to reach out with any questions or concerns.`, showTitle: false, id: 'section-default-1' },
+        { title: 'Health & Safety Update', body: `We're monitoring campus health concerns and have expanded excused absence options. If you're unwell, contact Dean Libby Davis to request an <a href=\"https://law.lclark.edu/live/forms/1833-excused-absence-request-form\">excused absence</a>.`, showTitle: true, id: 'section-default-2' },
       ],
       signature: 'Best,<br>Alec Palm<br>SBA Representative',
       footer: { url: 'https://law.lclark.edu/student_groups/student_bar_association/', text: 'Lewis & Clark Law Student Bar Association' },
@@ -357,17 +360,17 @@
     ${s.updatesHtml && s.updatesHtml.trim() ? `
     <div style="background-color: rgba(${hexToRgb(primary)}, 0.1); padding: 15px; margin: 20px; border-radius: 8px; border-left: 5px solid ${primary}; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);">
       <h2 style="color: ${cardText}; font-size: 19px; margin: 0 0 10px 0; font-weight: 600; letter-spacing: 0.5px;">Key Updates</h2>
-      <div style="margin: 0; padding-left: 0; font-size: 15px; line-height: 1.6;">${s.updatesHtml.replace(/href="([^"]*)"/g, `style="color: ${primary}; text-decoration: none; font-weight: 500;" href="$1"`)}</div>
+      <div style="margin: 0; padding-left: 0; font-size: 15px; line-height: 1.6;">${s.updatesHtml.replace(/href="([^"]*)"/g, `style="color: ${primary}; text-decoration: underline; font-weight: 500;" href="$1"`)}</div>
     </div>`: ''}
     <div style="padding: 0 20px 20px;">
       ${s.sections.map(sec=>`
         ${sec.showTitle && sec.title && sec.title.trim() ? `<h3 style=\"color: ${primary}; font-size: 17px; font-weight: 600; margin: 20px 0 10px; letter-spacing: 0.3px;\">${sec.title}</h3>` : ''}
-        <div style=\"margin: 10px 0; font-size: 15px; line-height: 1.7;\">${sec.body.replace(/href="([^"]*)"/g, `style="color: ${primary}; text-decoration: none; font-weight: 500;" href="$1"`)}</div>
+        <div style=\"margin: 10px 0; font-size: 15px; line-height: 1.7;\">${sec.body.replace(/href="([^"]*)"/g, `style="color: ${primary}; text-decoration: underline; font-weight: 500;" href="$1"`)}</div>
       `).join('')}
       ${hasContent(s.signature) ? `<p style="margin-top: 15px; font-size: 15px; color: #444; padding: 15px 0; border-top: 1px solid ${divider};">${s.signature}</p>` : ''}
     </div>
     <div style="text-align: center; font-size: 13px; color: #555; padding: 15px; background-color: #f9f9f9; border-top: 1px solid #ddd; border-radius: 0 0 12px 12px;">
-      <p> ${s.footer.url && s.footer.text ? `<a href="${escapeAttr(s.footer.url)}" style="color: ${primary}; text-decoration: none; font-weight: 500;">${s.footer.text}</a>`: ''}</p>
+      <p> ${s.footer.url && s.footer.text ? `<a href="${escapeAttr(s.footer.url)}" style="color: ${primary}; text-decoration: underline; font-weight: 500;">${s.footer.text}</a>`: ''}</p>
     </div>
   </div>
 </body></html>`;
@@ -394,28 +397,53 @@
 
     function syncInputs(){
       // Branding - colors and logo variant
-      el('primaryColor').value = state.colors.primary;
-      el('primaryHex').value = state.colors.primary;
-      el('heroTextColor').value = state.colors.heroText;
-      el('heroTextHex').value = state.colors.heroText;
-      document.getElementById('logoBlue').classList.toggle('selected', state.logoVariant==='blue');
-      document.getElementById('logoWhite').classList.toggle('selected', state.logoVariant==='white');
-      document.getElementById('logoBlack').classList.toggle('selected', state.logoVariant==='black');
+      const primaryColorEl = el('primaryColor');
+      const primaryHexEl = el('primaryHex');
+      const heroTextColorEl = el('heroTextColor');
+      const heroTextHexEl = el('heroTextHex');
+      const logoBlueEl = document.getElementById('logoBlue');
+      const logoWhiteEl = document.getElementById('logoWhite');
+      const logoBlackEl = document.getElementById('logoBlack');
+
+      if (primaryColorEl) primaryColorEl.value = state.colors.primary;
+      if (primaryHexEl) primaryHexEl.value = state.colors.primary;
+      if (heroTextColorEl) heroTextColorEl.value = state.colors.heroText;
+      if (heroTextHexEl) heroTextHexEl.value = state.colors.heroText;
+      if (logoBlueEl) logoBlueEl.classList.toggle('selected', state.logoVariant==='blue');
+      if (logoWhiteEl) logoWhiteEl.classList.toggle('selected', state.logoVariant==='white');
+      if (logoBlackEl) logoBlackEl.classList.toggle('selected', state.logoVariant==='black');
+
       // Hero
-      document.getElementById('headlineEditor').innerHTML = state.hero.headline;
-      document.getElementById('subheadlineEditor').innerHTML = state.hero.subheadline;
-      el('preheader').value = state.hero.preheader;
+      const headlineEditorEl = document.getElementById('headlineEditor');
+      const subheadlineEditorEl = document.getElementById('subheadlineEditor');
+      const preheaderEl = el('preheader');
+
+      if (headlineEditorEl) headlineEditorEl.innerHTML = state.hero.headline;
+      if (subheadlineEditorEl) subheadlineEditorEl.innerHTML = state.hero.subheadline;
+      if (preheaderEl) preheaderEl.value = state.hero.preheader;
+
       // Updates RTE
-      document.getElementById('updatesEditor').innerHTML = state.updatesHtml || '';
+      const updatesEditorEl = document.getElementById('updatesEditor');
+      if (updatesEditorEl) updatesEditorEl.innerHTML = state.updatesHtml || '';
+
       // Signature RTE
-      document.getElementById('signatureEditor').innerHTML = state.signature || '';
+      const signatureEditorEl = document.getElementById('signatureEditor');
+      if (signatureEditorEl) signatureEditorEl.innerHTML = state.signature || '';
 
       const sectionsWrap = document.getElementById('sections');
+      if (!sectionsWrap) {
+        console.error('Sections container not found');
+        return;
+      }
       sectionsWrap.innerHTML='';
       state.sections.forEach((sec, idx)=>{
         const tpl = document.getElementById('sectionItemTpl');
         if (!tpl || !tpl.content) return;
         const node = tpl.content.firstElementChild.cloneNode(true);
+        // Set unique ID for section identification
+        const sectionId = sec.id || ('section-' + idx + '-' + Date.now());
+        if (!sec.id) sec.id = sectionId; // Ensure the section has an ID in state
+        node.id = sectionId;
         const toggleBtn = node.querySelector('.toggle-title-btn');
         const titleContainer = node.querySelector('.title-container');
         const titleInput = node.querySelector('input');
@@ -490,13 +518,13 @@
       document.getElementById('signatureEditor').addEventListener('input', e=>{ state.signature = e.target.innerHTML; render(); });
       el('clearUpdates').addEventListener('click', ()=>{ state.updatesHtml = ''; syncInputs(); render(); });
       el('addSection').addEventListener('click', ()=>{
-        state.sections.push({title:'', body:'New section content...', showTitle: false});
+        const newSectionId = 'section-' + Date.now(); // Unique ID for the new section
+        state.sections.push({title:'', body:'New section content...', showTitle: false, id: newSectionId});
         syncInputs();
         render();
         // Animate the new section
         setTimeout(() => {
-          const sections = document.querySelectorAll('.section');
-          const newSection = sections[sections.length - 1]; // Get the last (newest) section
+          const newSection = document.getElementById(newSectionId);
           if (newSection) {
             newSection.classList.add('new-section');
             // Remove the animation class after it completes
@@ -512,6 +540,14 @@
       el('linkConfirm').addEventListener('click', () => {
         const url = el('linkUrl').value.trim();
         if (url) {
+          // Restore the saved selection before creating the link
+          if (savedSelection && lastFocusedRTE) {
+            lastFocusedRTE.focus();
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(savedSelection);
+            savedSelection = null; // Clear after use
+          }
           document.execCommand('createLink', false, url);
         }
         el('linkUrl').value = '';
@@ -536,6 +572,14 @@
           // Confirm link when Enter is pressed in link modal
           const url = el('linkUrl').value.trim();
           if (url) {
+            // Restore the saved selection before creating the link
+            if (savedSelection && lastFocusedRTE) {
+              lastFocusedRTE.focus();
+              const sel = window.getSelection();
+              sel.removeAllRanges();
+              sel.addRange(savedSelection);
+              savedSelection = null; // Clear after use
+            }
             document.execCommand('createLink', false, url);
           }
           el('linkUrl').value = '';
@@ -581,8 +625,27 @@
 
     // Simple RTE toolbar using execCommand (widely supported)
     function wireToolbar(){
-      let lastFocused = null;
       const toolbar = document.getElementById('rteToolbar');
+
+      // Helper functions for saving and restoring text selection
+      function saveSelection() {
+        if (window.getSelection) {
+          const sel = window.getSelection();
+          if (sel.rangeCount > 0) {
+            savedSelection = sel.getRangeAt(0).cloneRange();
+          }
+        }
+      }
+
+      function restoreSelection() {
+        if (savedSelection && lastFocusedRTE) {
+          lastFocusedRTE.focus();
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(savedSelection);
+          savedSelection = null; // Clear after use
+        }
+      }
 
       // Make toolbar morph bigger when sticky
       let isSticky = false;
@@ -613,7 +676,7 @@
       checkSticky();
 
       document.addEventListener('focusin', (e)=>{
-        if (e.target.classList && e.target.classList.contains('rte')) lastFocused = e.target;
+        if (e.target.classList && e.target.classList.contains('rte')) lastFocusedRTE = e.target;
       });
       toolbar.addEventListener('click', (e)=>{
         const btn = e.target.closest('button');
@@ -621,9 +684,10 @@
         e.preventDefault();
         const cmd = btn.getAttribute('data-cmd');
         const action = btn.getAttribute('data-action');
-        if (lastFocused) lastFocused.focus();
+        if (lastFocusedRTE) lastFocusedRTE.focus();
           if (cmd) document.execCommand(cmd, false, null);
           if (action === 'link') {
+            saveSelection(); // Save selection before showing modal
             showModal('linkModal');
           }
         if (action === 'clearFormat') {
@@ -659,5 +723,3 @@
   </script>
 </body>
 </html>
-
-
