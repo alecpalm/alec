@@ -280,6 +280,26 @@
       return textContent.length > 0;
     }
 
+    function updateStateFromEditor(editor) {
+      if (!editor || !isInDocument(editor)) return;
+      const id = editor.id;
+      if (id === 'headlineEditor') {
+        state.hero.headline = editor.innerHTML;
+      } else if (id === 'subheadlineEditor') {
+        state.hero.subheadline = editor.innerHTML;
+      } else if (id === 'updatesEditor') {
+        state.updatesHtml = editor.innerHTML;
+      } else if (id === 'signatureEditor') {
+        state.signature = editor.innerHTML;
+      } else if (editor.dataset && editor.dataset.sectionIndex) {
+        const idx = Number(editor.dataset.sectionIndex);
+        if (!Number.isNaN(idx) && state.sections[idx]) {
+          state.sections[idx].body = editor.innerHTML;
+        }
+      }
+      render();
+    }
+
     // Modal management functions
     function showModal(modalId) {
       const modal = document.getElementById(modalId);
@@ -293,17 +313,73 @@
       }
     }
 
+    function isInDocument(node) {
+      return !!(node && node.ownerDocument && node.ownerDocument.contains(node));
+    }
+
     function hideModal(modalId) {
       const modal = document.getElementById(modalId);
       if (modal) {
         modal.classList.remove('show');
+        const input = modal.querySelector('input');
+        if (input) input.value = '';
       }
     }
 
     function hideAllModals() {
       document.querySelectorAll('.modal-overlay').forEach(modal => {
         modal.classList.remove('show');
+        const input = modal.querySelector('input');
+        if (input) input.value = '';
       });
+      if (isInDocument(lastFocused)) {
+        lastFocused.focus();
+        restoreSelection(lastFocused);
+      }
+    }
+
+    let savedSelection = null;
+    let lastFocused = null;
+
+    function captureSelection(container) {
+      try {
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0) {
+          savedSelection = null;
+          return;
+        }
+        const range = selection.getRangeAt(0);
+        if (container && !container.contains(range.commonAncestorContainer)) {
+          savedSelection = null;
+          return;
+        }
+        savedSelection = range.cloneRange();
+      } catch (err) {
+        console.warn('Unable to capture selection:', err);
+        savedSelection = null;
+      }
+    }
+
+    function restoreSelection(container) {
+      if (!savedSelection) return;
+      try {
+        const selection = window.getSelection();
+        if (!selection) return;
+        if (container && !container.contains(savedSelection.commonAncestorContainer)) return;
+        selection.removeAllRanges();
+        selection.addRange(savedSelection);
+      } catch (err) {
+        console.warn('Unable to restore selection:', err);
+      }
+    }
+
+    function normalizeUrl(url) {
+      if (!url) return '';
+      const trimmed = url.trim();
+      if (/^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(trimmed)) {
+        return trimmed;
+      }
+      return `https://${trimmed}`;
     }
 
     function shade(hex, percent){
@@ -321,12 +397,36 @@
       ).toString(16).slice(1);
     }
 
+    function styleLinks(html, primaryColor) {
+      if (!html || typeof html !== 'string') return html || '';
+      let container;
+      try {
+        container = document.createElement('div');
+      } catch (err) {
+        console.warn('Unable to create container for link styling:', err);
+        return html;
+      }
+      container.innerHTML = html;
+      container.querySelectorAll('a').forEach(anchor => {
+        try {
+          if (primaryColor) {
+            anchor.style.color = primaryColor;
+          }
+          anchor.style.textDecoration = 'underline';
+          if (!anchor.style.fontWeight) {
+            anchor.style.fontWeight = '500';
+          }
+        } catch (err) {
+          console.warn('Failed to style link element:', err);
+        }
+      });
+      return container.innerHTML;
+    }
+
     function buildEmailHTML(s){
       const primary = clampHex(s.colors.primary);
-      const accent = clampHex(s.colors.accent);
       const primaryDark = shade(primary,-15);
       const headerBg = `linear-gradient(180deg, ${primary} 0%, ${shade(primary,-10)} 100%)`;
-      const cardBg = shade(primary, 45);
       const cardText = primary;
       const divider = '#eee';
 
@@ -350,24 +450,24 @@
         ${logos.right ? `<img src="${escapeAttr(logos.right)}" alt="Right Logo" class="${logoClass}" style="max-height: 55px; display: inline-block; vertical-align: middle;">` : ''}
       </div>
       <h1 style="margin: 8px 0 3px 0; font-size: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; line-height: 1.2; color: ${s.colors.heroText};">
-        <span>${s.hero.headline}</span>
+        <span>${styleLinks(s.hero.headline, primary)}</span>
       </h1>
-      <p style="margin: 3px 0 8px 0; font-size: 13px; font-weight: 400; opacity: 0.95; line-height: 1.4; color: ${s.colors.heroText};">${s.hero.subheadline}</p>
+      <p style="margin: 3px 0 8px 0; font-size: 13px; font-weight: 400; opacity: 0.95; line-height: 1.4; color: ${s.colors.heroText};">${styleLinks(s.hero.subheadline, primary)}</p>
     </div>
     ${s.updatesHtml && s.updatesHtml.trim() ? `
     <div style="background-color: rgba(${hexToRgb(primary)}, 0.1); padding: 15px; margin: 20px; border-radius: 8px; border-left: 5px solid ${primary}; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);">
       <h2 style="color: ${cardText}; font-size: 19px; margin: 0 0 10px 0; font-weight: 600; letter-spacing: 0.5px;">Key Updates</h2>
-      <div style="margin: 0; padding-left: 0; font-size: 15px; line-height: 1.6;">${s.updatesHtml.replace(/href="([^"]*)"/g, `style="color: ${primary}; text-decoration: none; font-weight: 500;" href="$1"`)}</div>
+      <div style="margin: 0; padding-left: 0; font-size: 15px; line-height: 1.6;">${styleLinks(s.updatesHtml, primary)}</div>
     </div>`: ''}
     <div style="padding: 0 20px 20px;">
       ${s.sections.map(sec=>`
         ${sec.showTitle && sec.title && sec.title.trim() ? `<h3 style=\"color: ${primary}; font-size: 17px; font-weight: 600; margin: 20px 0 10px; letter-spacing: 0.3px;\">${sec.title}</h3>` : ''}
-        <div style=\"margin: 10px 0; font-size: 15px; line-height: 1.7;\">${sec.body.replace(/href="([^"]*)"/g, `style="color: ${primary}; text-decoration: none; font-weight: 500;" href="$1"`)}</div>
+        <div style=\"margin: 10px 0; font-size: 15px; line-height: 1.7;\">${styleLinks(sec.body, primary)}</div>
       `).join('')}
-      ${hasContent(s.signature) ? `<p style="margin-top: 15px; font-size: 15px; color: #444; padding: 15px 0; border-top: 1px solid ${divider};">${s.signature}</p>` : ''}
+      ${hasContent(s.signature) ? `<p style="margin-top: 15px; font-size: 15px; color: #444; padding: 15px 0; border-top: 1px solid ${divider};">${styleLinks(s.signature, primary)}</p>` : ''}
     </div>
     <div style="text-align: center; font-size: 13px; color: #555; padding: 15px; background-color: #f9f9f9; border-top: 1px solid #ddd; border-radius: 0 0 12px 12px;">
-      <p> ${s.footer.url && s.footer.text ? `<a href="${escapeAttr(s.footer.url)}" style="color: ${primary}; text-decoration: none; font-weight: 500;">${s.footer.text}</a>`: ''}</p>
+      <p> ${s.footer.url && s.footer.text ? `<a href="${escapeAttr(s.footer.url)}" style="color: ${primary}; text-decoration: underline; font-weight: 500;">${s.footer.text}</a>`: ''}</p>
     </div>
   </div>
 </body></html>`;
@@ -458,6 +558,7 @@
         updateTitleDisplay();
         titleInput.value = sec.title;
         bodyDiv.innerHTML = sec.body;
+        bodyDiv.dataset.sectionIndex = idx;
 
         titleInput.addEventListener('input', e=>{ state.sections[idx].title = e.target.value; render(); });
         bodyDiv.addEventListener('input', e=>{ state.sections[idx].body = e.target.innerHTML; render(); });
@@ -508,15 +609,32 @@
       });
 
       // Modal event listeners
-      el('linkCancel').addEventListener('click', () => hideModal('linkModal'));
-      el('linkConfirm').addEventListener('click', () => {
-        const url = el('linkUrl').value.trim();
-        if (url) {
-          document.execCommand('createLink', false, url);
+      const handleLinkConfirm = () => {
+        const input = el('linkUrl');
+        const rawUrl = input.value.trim();
+        if (!rawUrl) {
+          input.focus();
+          return;
         }
-        el('linkUrl').value = '';
+        const url = normalizeUrl(rawUrl);
+        if (url && isInDocument(lastFocused)) {
+          lastFocused.focus();
+          restoreSelection(lastFocused);
+          document.execCommand('createLink', false, url);
+          captureSelection(lastFocused);
+          updateStateFromEditor(lastFocused);
+        }
         hideModal('linkModal');
+      };
+
+      el('linkCancel').addEventListener('click', () => {
+        hideModal('linkModal');
+        if (isInDocument(lastFocused)) {
+          lastFocused.focus();
+          restoreSelection(lastFocused);
+        }
       });
+      el('linkConfirm').addEventListener('click', handleLinkConfirm);
       el('copyClose').addEventListener('click', () => hideModal('copyModal'));
 
       // Close modals when clicking overlay
@@ -532,14 +650,15 @@
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
           hideAllModals();
-        } else if (e.key === 'Enter' && document.getElementById('linkModal').classList.contains('show')) {
-          // Confirm link when Enter is pressed in link modal
-          const url = el('linkUrl').value.trim();
-          if (url) {
-            document.execCommand('createLink', false, url);
+          return;
+        }
+        const linkModal = document.getElementById('linkModal');
+        if (e.key === 'Enter' && linkModal && linkModal.classList.contains('show')) {
+          const isTargetInsideModal = linkModal.contains(e.target);
+          if (isTargetInsideModal) {
+            e.preventDefault();
+            handleLinkConfirm();
           }
-          el('linkUrl').value = '';
-          hideModal('linkModal');
         }
       });
 
@@ -581,7 +700,6 @@
 
     // Simple RTE toolbar using execCommand (widely supported)
     function wireToolbar(){
-      let lastFocused = null;
       const toolbar = document.getElementById('rteToolbar');
 
       // Make toolbar morph bigger when sticky
@@ -613,7 +731,17 @@
       checkSticky();
 
       document.addEventListener('focusin', (e)=>{
-        if (e.target.classList && e.target.classList.contains('rte')) lastFocused = e.target;
+        if (e.target.classList && e.target.classList.contains('rte')) {
+          lastFocused = e.target;
+          captureSelection(lastFocused);
+        }
+      });
+
+      document.addEventListener('selectionchange', () => {
+        const active = document.activeElement;
+        if (active && active.classList && active.classList.contains('rte')) {
+          captureSelection(active);
+        }
       });
       toolbar.addEventListener('click', (e)=>{
         const btn = e.target.closest('button');
@@ -621,14 +749,23 @@
         e.preventDefault();
         const cmd = btn.getAttribute('data-cmd');
         const action = btn.getAttribute('data-action');
-        if (lastFocused) lastFocused.focus();
-          if (cmd) document.execCommand(cmd, false, null);
-          if (action === 'link') {
-            showModal('linkModal');
-          }
-        if (action === 'clearFormat') {
+        if (lastFocused) {
+          lastFocused.focus();
+          restoreSelection(lastFocused);
+        }
+        if (cmd) {
+          document.execCommand(cmd, false, null);
+          captureSelection(lastFocused);
+          updateStateFromEditor(lastFocused);
+        }
+        if (action === 'link') {
+          captureSelection(lastFocused);
+          showModal('linkModal');
+        } else if (action === 'clearFormat') {
           document.execCommand('removeFormat');
           document.execCommand('unlink');
+          captureSelection(lastFocused);
+          updateStateFromEditor(lastFocused);
         }
       });
     }
