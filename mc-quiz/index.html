@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MC Quiz - Contract Law</title>
+  <link rel="icon" href="/files/apfavi.png" type="image/x-icon">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color: #1f2937;
+      background: #f9fafb;
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .container {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    
+    header {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+    
+    .brand {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    
+    .logo-link {
+      text-decoration: none;
+    }
+    
+    .logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: #3b82f6;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    h1 {
+      font-size: 24px;
+      margin: 0;
+      font-weight: 700;
+      color: #111827;
+    }
+    
+    .quiz-container {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      padding: 40px;
+      border: 1px solid #e5e7eb;
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        padding: 16px;
+      }
+      
+      .container {
+        max-width: 100%;
+      }
+      
+      header {
+        margin-bottom: 24px;
+      }
+      
+      h1 {
+        font-size: 20px;
+      }
+      
+      .logo {
+        width: 36px;
+        height: 36px;
+        font-size: 12px;
+      }
+      
+      .quiz-container {
+        padding: 24px 20px;
+      }
+      
+      .start-screen h2 {
+        font-size: 24px;
+      }
+      
+      .start-screen p {
+        font-size: 14px;
+      }
+      
+      .question-text {
+        font-size: 18px;
+      }
+      
+      .option {
+        padding: 14px 16px;
+        font-size: 15px;
+      }
+      
+      .results-screen h2 {
+        font-size: 28px;
+      }
+      
+      .score {
+        font-size: 48px;
+      }
+      
+      .score-text {
+        font-size: 16px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      body {
+        padding: 12px;
+      }
+      
+      .quiz-container {
+        padding: 20px 16px;
+      }
+      
+      .start-screen h2 {
+        font-size: 22px;
+      }
+      
+      .question-text {
+        font-size: 16px;
+      }
+      
+      .option {
+        padding: 12px 14px;
+        font-size: 14px;
+      }
+      
+      .option-label {
+        width: 24px;
+        height: 24px;
+        min-width: 24px;
+        font-size: 14px;
+      }
+      
+      .feedback {
+        padding: 14px 16px;
+        font-size: 14px;
+      }
+      
+      .btn {
+        padding: 10px 20px;
+        font-size: 15px;
+      }
+      
+      .next-btn {
+        padding: 10px;
+        font-size: 15px;
+      }
+    }
+    
+    .start-screen, .question-screen, .results-screen {
+      text-align: center;
+    }
+    
+    .start-screen h2 {
+      font-size: 28px;
+      margin-bottom: 16px;
+      color: #111827;
+      font-weight: 700;
+    }
+    
+    .start-screen p {
+      color: #6b7280;
+      font-size: 16px;
+      margin-bottom: 32px;
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      outline: none;
+    }
+    
+    .btn-primary {
+      background: #3b82f6;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: #2563eb;
+    }
+    
+    .btn-primary:focus {
+      background: #2563eb;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+    
+    .progress-bar {
+      height: 4px;
+      background: #e5e7eb;
+      border-radius: 2px;
+      margin-bottom: 32px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: #3b82f6;
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+    
+    .question-number {
+      font-size: 14px;
+      color: #6b7280;
+      font-weight: 500;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+    
+    .question-text {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 32px;
+      line-height: 1.6;
+      color: #111827;
+      text-align: left;
+    }
+    
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    
+    .option {
+      padding: 16px 20px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      text-align: left;
+      font-size: 16px;
+      outline: none;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    
+    .option:hover {
+      border-color: #3b82f6;
+      background: #eff6ff;
+    }
+    
+    .option:focus {
+      border-color: #3b82f6;
+      background: #eff6ff;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    .option.selected {
+      border-color: #3b82f6;
+      background: #eff6ff;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    .option.correct {
+      border-color: #10b981;
+      background: #d1fae5;
+    }
+    
+    .option.incorrect {
+      border-color: #ef4444;
+      background: #fee2e2;
+    }
+    
+    .option.disabled {
+      pointer-events: none;
+    }
+    
+    .feedback {
+      margin-top: 24px;
+      padding: 16px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      line-height: 1.6;
+      text-align: left;
+    }
+    
+    .feedback.correct {
+      background: #d1fae5;
+      border: 1px solid #10b981;
+      color: #065f46;
+    }
+    
+    .feedback.incorrect {
+      background: #fee2e2;
+      border: 1px solid #ef4444;
+      color: #991b1b;
+    }
+    
+    .feedback-icon {
+      font-size: 20px;
+      margin-right: 8px;
+      display: inline-block;
+    }
+    
+    .feedback-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+    
+    .next-btn {
+      margin-top: 24px;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      outline: none;
+    }
+    
+    .next-btn:hover {
+      background: #2563eb;
+    }
+    
+    .next-btn:focus {
+      background: #2563eb;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+    
+    .results-screen h2 {
+      font-size: 32px;
+      margin-bottom: 16px;
+      color: #111827;
+      font-weight: 700;
+    }
+    
+    .score {
+      font-size: 64px;
+      font-weight: 700;
+      color: #3b82f6;
+      margin: 24px 0;
+    }
+    
+    .score-text {
+      font-size: 18px;
+      color: #6b7280;
+      margin-bottom: 32px;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .option-label {
+      font-weight: 600;
+      color: #3b82f6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      flex-shrink: 0;
+      text-align: center;
+      background: #eff6ff;
+      border-radius: 6px;
+    }
+    
+    .option-text {
+      flex: 1;
+      line-height: 1.5;
+    }
+    
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #6b7280;
+      font-size: 12px;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <a href="/" class="logo-link">
+          <div class="logo">AP</div>
+        </a>
+        <div>
+          <h1>Contract Law Quiz</h1>
+        </div>
+      </div>
+    </header>
+
+    <div class="quiz-container">
+      <!-- Start Screen -->
+      <div id="startScreen" class="start-screen">
+        <h2>🎯 Ready to Test Your Knowledge?</h2>
+        <button class="btn btn-primary" onclick="startQuiz()">Start Quiz</button>
+      </div>
+
+      <!-- Question Screen -->
+      <div id="questionScreen" class="question-screen hidden">
+        <div class="progress-bar">
+          <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+        </div>
+        <div class="question-number">Question <span id="questionNum">1</span> of <span id="totalQuestions">25</span></div>
+        <div class="question-text" id="questionText"></div>
+        <div class="options" id="options"></div>
+        <button id="submitBtn" class="next-btn hidden" onclick="submitAnswer()" onkeydown="if(event.key==='Enter') submitAnswer()">Submit Answer</button>
+        <div id="feedback" class="feedback hidden"></div>
+        <button id="nextBtn" class="next-btn hidden" onclick="nextQuestion()" onkeydown="if(event.key==='Enter') nextQuestion()">Next Question →</button>
+      </div>
+
+      <!-- Results Screen -->
+      <div id="resultsScreen" class="results-screen hidden">
+        <h2>🎉 Quiz Complete!</h2>
+        <div class="score" id="score">0%</div>
+        <div class="score-text">You got <span id="correctCount">0</span> out of <span id="totalCount">25</span> questions correct</div>
+        <button class="btn btn-primary" onclick="restartQuiz()">Restart Quiz</button>
+      </div>
+    </div>
+
+    <footer>
+      © 2025 Alec Palm
+    </footer>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "John entered into an oral contract to provide lawn care and snow removal services to Coretta. They created this contract on November 1, 2024. Under the terms of the contract the work is to be performed from January 15, 2025, until March 1, 2026. What is the status of this contract?",
+        options: [
+          "This contract is unenforceable because it is unilateral.",
+          "This contract is enforceable because it is a contract for services.",
+          "This contract is unenforceable because it violates the one-year rule of the Statute of Frauds",
+          "This contract is enforceable because there is adequate consideration."
+        ],
+        correct: 2,
+        explanation: "This contract is unenforceable because it violates the one-year rule of the Statute of Frauds"
+      },
+      {
+        question: "Park entered into a contract to sell Reed a parcel of land. Park was aware that Reed was purchasing the land with the intention of building a high-rise office building. Park was also aware of the fact that a subsurface soil condition would prevent such construction. The condition was extremely unusual and not readily discoverable in the course of normal inspections or soil evaluations. Park did not disclose the existence of the condition to Reed, nor did Reed discover the condition during an inspection of the land. Park's silence as to the soil condition:",
+        options: [
+          "Renders the contract void.",
+          "Is evidence of a contract made under duress.",
+          "Does not affect the validity of the contract.",
+          "Renders the contract voidable at Reed's option."
+        ],
+        correct: 3,
+        explanation: "Renders the contract voidable at Reed's option."
+      },
+      {
+        question: "The Benson Ball Bearing Company orally agrees to sell 10,000 boxes of ball bearings to the Smith Motor Company at a rate of $10 per box, for a total of $100,000, and Smith orally agrees to pay that amount. Benson delivers 5,000 boxes, which Smith accepts. Later, when it comes time to pay, Smith refuses to pay, citing the Statute of Frauds. Here, Smith is obligated to pay:",
+        options: [
+          "Nothing",
+          "$100,000",
+          "$75,000",
+          "$50,000"
+        ],
+        correct: 3,
+        explanation: "$50,000"
+      },
+      {
+        question: "Carter owns a parcel of land. Smith, one of Carter's closest friends and an attorney, has persuaded Carter to sell the land to Smith at a price substantially below fair market value. At the time Carter sold the land, he was resting in a nursing home recovering from a serious illness. If Carter desires to set aside the sale, which of the following causes of action is most likely to be successful?",
+        options: [
+          "Fraud",
+          "Undue Influence",
+          "Mistake",
+          "Duress"
+        ],
+        correct: 1,
+        explanation: "Undue Influence"
+      },
+      {
+        question: "A computer manufacturer offered to sell sophisticated computer equipment to another country. Two days later, before the offer was accepted, Congress placed an embargo on all sales to this country; and therefore, the offer was terminated by the embargo. This is an example of:",
+        options: [
+          "Promissory estoppel.",
+          "Destruction of subject matter.",
+          "Intervening illegality.",
+          "Revocation"
+        ],
+        correct: 2,
+        explanation: "Intervening illegality."
+      },
+      {
+        question: "Mr. Green contracts to repair his roof with Mr. Brown. Prior to the work starting, a tornado destroy Mr. Green's home. Mr. Brown fails to perform the repair that was obligated under the contract, but the court will excuse his breach due to the doctrine of:",
+        options: [
+          "Duress",
+          "Illegality",
+          "Impossibility",
+          "Lack of consideration"
+        ],
+        correct: 2,
+        explanation: "Impossibility"
+      },
+      {
+        question: "Smith and Benson make an oral contract for the sale of some land at a price of $500,000. After paying Smith $200,000 of the purchase price, Benson takes possession of the land. One month later, Smith wants to boot Benson off the land. His argument is that the parties' oral agreement is unenforceable under the statute of frauds. Which of the following is most correct?",
+        options: [
+          "Smith is correct, because the contract is for an amount greater than $500.",
+          "Smith is correct, because this is an oral contract for the sale of real estate.",
+          "Smith is incorrect, because the contract is for an indefinite period of time.",
+          "Smith is incorrect, because Benson paid part of the purchase price and took possession"
+        ],
+        correct: 3,
+        explanation: "Smith is incorrect, because Benson paid part of the purchase price and took possession"
+      },
+      {
+        question: "Mr. Green enters into a contract with Mr. Blue who is a crab fisherman. Mr. Green and Mr. Blue know that Mr. Blue has already caught the number of crabs allowed for the season. Nonetheless, Mr. Green and Mr. Blue agree to a contract to exceed the quota. What is the status of the contract between Mr. Green and Mr. Blue?",
+        options: [
+          "The contract will be valid only if Mr. Blue offered adequate consideration.",
+          "The contract is voidable and is enforceable until Mr. Blue cancels it.",
+          "The contract is void because it attempts to contract for services that are illegal.",
+          "The contract is valid and enforceable."
+        ],
+        correct: 2,
+        explanation: "The contract is void because it attempts to contract for services that are illegal."
+      },
+      {
+        question: "Ashley sells a painting to Brian for $1,000. They both believe it to worth a significant amount due to its artistic style. Two months after the sale, Brian has it appraised and it is estimated to be worth $100. Brian now wants his money back. Which of the following is true regarding the enforceability of the contract?",
+        options: [
+          "The contract is voidable by Brian, due to misrepresentation.",
+          "The contract is voidable by either party because a mutual mistake occurred regarding a material fact.",
+          "The contract is enforceable because Brian did not appraise it within a reasonable time.",
+          "The contract is enforceable, because Brian knew he had limited knowledge when making the purchase."
+        ],
+        correct: 3,
+        explanation: "The contract is enforceable, because Brian knew he had limited knowledge when making the purchase."
+      },
+      {
+        question: "Ashley is selling a painting and she tells her friend Brian that she thinks it is worth about $100. Brian has the painting appraised and is told it is worth well over $4,500. Brian knows that Ashley needs money immediately and sees this as an opportunity to make some quick cash by reselling it to a friend who is an art dealer. Without telling Ashley what the painting appraised for, he offers to buy it for $450, telling her he will bring the money the next day. Surprised but grateful, Ashley quickly agrees, letting Brian take the painting home. The next day, he takes it to his art dealer friend who says the painting is actually worthless. Brian returns the painting to Ashley, telling her that he will not pay the $450, but she can have the painting back. Which of the following is true regarding the enforceability of the contract?",
+        options: [
+          "The contract is voidable by Brian, due to Ashley's misrepresentation.",
+          "The contract is enforceable because the mutual mistake was only about the value, not the identity or existence of the painting.",
+          "The contract may be voidable by Ashley but enforceable against Brian because Brian had a duty to disclose and he failed to do so.",
+          "The contract is voidable because neither party bore the risk of the mutual mistake."
+        ],
+        correct: 2,
+        explanation: "The contract may be voidable by Ashley but enforceable against Brian because Brian had a duty to disclose and he failed to do so."
+      },
+      {
+        question: "On Thursday, Trista receives a letter from Charlie in which he offers to sell her a diamond ring. The letter states: \"if you choose to accept, you must do so prior to 2:00 p.m. tomorrow.\" At 1:45 p.m. on Friday, Trista put her acceptance in the mailbox. Do Trista and Charlie have a contract?",
+        options: [
+          "No, because Trista's supposed acceptance was untimely.",
+          "Yes, because Trista dispatched the acceptance prior to 2:00 p.m.",
+          "Yes, because acceptance needed to be in writing.",
+          "No, because Charlie would not have learned of the acceptance until after 2:00 p.m."
+        ],
+        correct: 1,
+        explanation: "Yes, because Trista dispatched the acceptance prior to 2:00 p.m."
+      },
+      {
+        question: "Sue offers to buy a house from Maria and they were negotiating the price of the house. In the meantime, Sue confides in Maria's husband, John, that she is willing to pay an amount of $50,000 for the house. Delighted to hear this, John calls Maria and tells her the good news. Maria immediately calls up Sue and accepts her offer. Is there a binding contract?",
+        options: [
+          "Yes, because a third party has communicated the terms of Sue's offer to John and that John had accepted the same.",
+          "No, because the offeror had not communicated the terms of the offer to the offeree.",
+          "Yes, because there is valid consideration",
+          "No, because the contract is still not signed by both the parties"
+        ],
+        correct: 1,
+        explanation: "No, because the offeror had not communicated the terms of the offer to the offeree."
+      },
+      {
+        question: "Bill is 25 years old. His uncle promised in writing to pay him $2,000 if Bill would not drink alcohol for one year. Bill drank no alcohol for one year. However, his uncle has refused to pay Bill as agreed. The uncle claims that because Bill suffered no detriment by refraining from alcohol, his non-drinking does not constitute legal consideration therefore no contract was formed. If Bill sues his uncle, Bill will:",
+        options: [
+          "Lose because consideration must have monetary value",
+          "Win because no consideration is needed in this contract.",
+          "Lose because refraining from an action can never be considered legal consideration",
+          "Win because Bill had a right to drink alcohol, and his forbearance is consideration."
+        ],
+        correct: 3,
+        explanation: "Win because Bill had a right to drink alcohol, and his forbearance is consideration."
+      },
+      {
+        question: "Hester Ickle lost her priceless antique wedding band. She placed an advertisement in the newspaper stating the following: \"$5000 reward for the return of my wedding ring.\" Finn DaKeepa, after seeing the ad, finds the ring and returns it to Hester, but Hester refuses to pay Finn the $5000. What would be the result if Finn sues Hester for the money?",
+        options: [
+          "Because Finn did not pay Hester to keep the offer open, Hester is free to revoke and need not pay Finn anything.",
+          "Because the ad was merely an invitation for others to make an offer, there was no contract until Hester accepted Finn's offer to find the ring, which Hester never did.",
+          "Finn may not recover the money because he did not contact Hester before he began his search.",
+          "The ad was an offer for a unilateral contract, which Finn accepted by returning the ring to Hester. She is therefore bound to pay Finn the $5000."
+        ],
+        correct: 3,
+        explanation: "The ad was an offer for a unilateral contract, which Finn accepted by returning the ring to Hester. She is therefore bound to pay Finn the $5000."
+      },
+      {
+        question: "Larson Lexus, a new car dealer, runs the following newspaper ad during the Spring of 2022. \"Three '25 Lexus RZ must go! $40,000 each! The first three customers who arrive at our dealership on Saturday, November 9 with this ad can buy one of these cars for $40,000!\" Knowing that $40,000 is a very good price for a Lexus RZ, Mike is the first customer to appear at the Larson lot on Saturday, November 9. He hands the ad to the Larson salesman and says that he'd like to buy one of the Lexus RZ's for $40,000. Is the dealership contractually bound to sell Mike the car at that price?",
+        options: [
+          "No, because all advertisements are invitations of an offer.",
+          "Yes, because this ad is a unilateral offer and Mike accepted it.",
+          "Yes, because all advertisements are offers.",
+          "No, because under the UCC rule, ads of this kind are not offers."
+        ],
+        correct: 1,
+        explanation: "Yes, because this ad is a unilateral offer and Mike accepted it."
+      },
+      {
+        question: "Linda needs a software program for her business, but there is a current program like it on the market. She eneters into a contract with SoftDevel, Co. to design, program and tailor the softward for her. The price of the software program was $3,000 and the cost of the labor to create the software was $3,000. Later, Linda became dissatisfied with this transaction and now wants to sue SoftDevel, Co.. Linda wants to apply the contract rules of the UCC, but SoftDevel, Co., wants to apply the contract rules of the common law. Which source of law should govern this case?",
+        options: [
+          "The contract rules of common law because all contracts are governed by common law.",
+          "The contract rules of common law because the predominant purpose of the contract was the services.",
+          "The contract rules of the UCC because the contract included the sale of goods.",
+          "The contract rules of the UCC because the predominant purpose of the contract was the sale of goods."
+        ],
+        correct: 1,
+        explanation: "The contract rules of common law because the predominant purpose of the contract was the services."
+      },
+      {
+        question: "Tom, the president of Deal Corp. wrote to Boyd, offering to sell the his ranch in Montana for $300,000. The offer was sent by Tom on June 5 and was received by Boyd on June 9. The offer stated that it would remain open until December 20. The offer:",
+        options: [
+          "May be revoked by Tom any time prior to Boyd's acceptance.",
+          "Is a firm offer under the UCC but will be irrevocable for only three months.",
+          "Constitutes an enforceable option.",
+          "Is a firm offer under the UCC because it is in writing."
+        ],
+        correct: 0,
+        explanation: "May be revoked by Tom any time prior to Boyd's acceptance."
+      },
+      {
+        question: "X and Y contract for X to build Y a house for $150,000. Later, without terminating the first contract, X and Y modify that contract so that Y will pay X $175,000. In return, X promises to build exactly the same house, but to finish it two weeks earlier than in the previous contract. This second contract:",
+        options: [
+          "Is not binding because there is no consideration.",
+          "Is not binding because the earlier completion date is inadequate consideration for $25,000.",
+          "Is a binding contract.",
+          "Is not binding because X is promising to perform a preexisting legal obligation."
+        ],
+        correct: 2,
+        explanation: "Is a binding contract."
+      },
+      {
+        question: "Ace orally offers to sell B 100 premium-grade fountain pens but neglects to state the price. Such pens typically sell for $1 each. B orally accepts. Immediately thereafter, Ace tries to back out of the deal. At this point in time, which of the following is most likely to be true?",
+        options: [
+          "There is no offer and no contract because the offer must be in writing.",
+          "There is no contract because the offer is indefinite",
+          "There is a contract because common law governs this sale.",
+          "There is a contract because the parties intended to make a contract and there is a reasonably certain basis for giving an appropriate remedy."
+        ],
+        correct: 3,
+        explanation: "There is a contract because the parties intended to make a contract and there is a reasonably certain basis for giving an appropriate remedy."
+      },
+      {
+        question: "Able borrowed $10,000 from Baker, promising to return it with $1,000 interest on January 1, 2025. There is no dispute that Able owes Baker $11,000 due on January 1, 2025. On December 1, 2024, Able gave Baker a valid check in the amount of $10,500 marked \"payment in full for loan due January 1, 2025.\" Baker accepted that check and deposited it into his account. If Baker then sues Able for the unpaid $500, what is the result?",
+        options: [
+          "Able wins, because Baker accepted the lesser payment.",
+          "Able wins, because Baker made an implied promise to accept $10,500 as full payment, thereby forgiving $500 of the loan.",
+          "Baker wins, because marking \"payment in full\" can never relieve a party of its original obligations under a contract.",
+          "Baker wins, because Able gave no consideration in exchange for Baker's promise to forgive $500 of the loan."
+        ],
+        correct: 1,
+        explanation: "Able wins, because Baker made an implied promise to accept $10,500 as full payment, thereby forgiving $500 of the loan."
+      },
+      {
+        question: "Kyle sent Tara a letter offering to sell Tara his car. Tara left the letter on her desk, where her roommate, Maggie, saw it. After reading the letter, Maggie wrote to Kyle and stated that she (Maggie) wanted to accept Kyle's offer. Which of the following is true?",
+        options: [
+          "Maggie's letter is a valid acceptance of Kyle's offer.",
+          "Kyle and Tara have a contract for the purchase of Kyle's car.",
+          "Kyle must sell Maggie his car unless Kyle is a merchant under the UCC",
+          "There is no contract between Kyle and Maggie because Kyle did not communicate the offer to Maggie"
+        ],
+        correct: 3,
+        explanation: "There is no contract between Kyle and Maggie because Kyle did not communicate the offer to Maggie"
+      },
+      {
+        question: "Milner Developers proposed an offer to Henry Wright, an independent contractor, offering to hire him for their next project. They offered him a certain rate and specified the contract details, along with describing the stipulated mode of acceptance, but received no response. Wright responded to the offer after a delay of two months with a quote for a higher amount than that mentioned by Milner Developers. Do the two parties have a binding contract?",
+        options: [
+          "No, because Wright's letter was a counteroffer to the original offer.",
+          "Yes, because Milner Developers did receive a response from Wright.",
+          "No, because the offer made by Milner Developers was ambiguous.",
+          "Yes, because Wright's silence signaled acceptance of the offer."
+        ],
+        correct: 0,
+        explanation: "No, because Wright's letter was a counteroffer to the original offer."
+      },
+      {
+        question: "Chica, a women's clothing store, held a \"prize drawing\" for a $500 shopping spree on Saturday that it had advertised throughout the week. Participation in the drawing required being at the store by noon and completing an application form that included personal information and placing it in a box. The information would then be put into a database for marketing purposes. Joy arrived at the store before noon and completed the application. At drawing time, Joy was the winner of the drawing. Chica argues that it does not owe Joy anything because Joy has not given any consideration. Has she given consideration for the prize?",
+        options: [
+          "No, unless she purchased an item from the store.",
+          "Yes, unless the store was conveniently located.",
+          "No, she gave no legal value to Chica.",
+          "Yes, she came to the store and gave information that was for the store's use."
+        ],
+        correct: 3,
+        explanation: "Yes, she came to the store and gave information that was for the store's use."
+      },
+      {
+        question: "Last month, out of the goodness of her heart, Aurora mowed Cornelius's lawn while he was on vacation. Cornelius's golden retriever dog just had a litter of puppies. Because Cornelius appreciated what Aurora did for him, Cornelius promises to give Aurora the pick of the litter as soon as the puppies are weaned. Aurora says to Cornelius, \"Today there is a sale on puppy supplies at Uncle Bill's Pet Supply Store. I am going to go buy a kennel, dog food, dog toys, and a leash.\" Aurora does, in fact, buy those supplies. A few weeks later, Aurora learns that Cornelius has already given away all of the puppies. Which of the following is true?",
+        options: [
+          "Cornelius has committed a material breach of the contract.",
+          "Cornelius and Aurora do not have a binding contract; Aurora gave no consideration for Cornelius's promise.",
+          "Both A and C.",
+          "Cornelius is probably liable to Aurora under the doctrine of promissory estoppel, because it was foreseeable that Aurora would rely on Cornelius's promise to her detriment and she did rely on it reasonably."
+        ],
+        correct: 2,
+        explanation: "Both A and C."
+      },
+      {
+        question: "Daniel owes Casey a debt, the amount of which is subject to a good faith dispute. The parties agree to settle the debt, with Daniel promising to pay Casey $15,000 and Casey promising to release Daniel on the debt, even though Casey believed the debt Daniel owed was more in the range of $25,000. The settlement agreement:",
+        options: [
+          "lacks consideration because Casey is not giving Daniel any legal value.",
+          "is binding under UCC even though there is no consideration.",
+          "is supported by consideration and enforceable.",
+          "lacks consideration because Daniel is promising to perform a preexisting legal obligation."
+        ],
+        correct: 2,
+        explanation: "is supported by consideration and enforceable."
+      }
+    ];
+
+    let currentQuestions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let selectedAnswer = null;
+    let answerSubmitted = false;
+
+    function shuffleArray(array) {
+      const shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
+    function startQuiz() {
+      if (!questions || questions.length === 0) {
+        alert('No questions available');
+        return;
+      }
+      currentQuestions = shuffleArray(questions);
+      currentQuestionIndex = 0;
+      score = 0;
+      document.getElementById('startScreen').classList.add('hidden');
+      document.getElementById('questionScreen').classList.remove('hidden');
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const question = currentQuestions[currentQuestionIndex];
+      if (!question || !question.options || question.options.length === 0) {
+        console.error('Invalid question data');
+        return;
+      }
+      
+      selectedAnswer = null;
+      answerSubmitted = false;
+
+      document.getElementById('questionNum').textContent = currentQuestionIndex + 1;
+      document.getElementById('totalQuestions').textContent = currentQuestions.length;
+      document.getElementById('questionText').textContent = question.question || '';
+      
+      const progress = currentQuestions.length > 0 ? ((currentQuestionIndex + 1) / currentQuestions.length) * 100 : 0;
+      document.getElementById('progressFill').style.width = progress + '%';
+
+      const optionsContainer = document.getElementById('options');
+      optionsContainer.innerHTML = '';
+      
+      question.options.forEach((option, index) => {
+        const optionDiv = document.createElement('div');
+        optionDiv.className = 'option';
+        optionDiv.setAttribute('tabindex', '0');
+        optionDiv.setAttribute('role', 'button');
+        optionDiv.innerHTML = `<span class="option-label">${String.fromCharCode(97 + index)}</span><span class="option-text">${option || ''}</span>`;
+        optionDiv.onclick = () => selectOption(index, optionDiv);
+        optionsContainer.appendChild(optionDiv);
+      });
+
+      document.getElementById('feedback').classList.add('hidden');
+      document.getElementById('nextBtn').classList.add('hidden');
+      document.getElementById('submitBtn').classList.add('hidden');
+      
+      // Add keyboard navigation
+      setupKeyboardNavigation();
+    }
+    
+    function setupKeyboardNavigation() {
+      const options = document.querySelectorAll('.option');
+      if (options.length === 0) return;
+      
+      options.forEach((opt, index) => {
+        opt.onkeydown = (e) => {
+          // Check if answer already submitted by checking if options are disabled
+          if (opt.classList.contains('disabled')) return;
+          
+          if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            const nextIndex = (index + 1) % options.length;
+            options[nextIndex].focus();
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            const prevIndex = (index - 1 + options.length) % options.length;
+            options[prevIndex].focus();
+          } else if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            if (!answerSubmitted) {
+              selectOption(index, opt);
+            }
+          }
+        };
+      });
+    }
+
+    function selectOption(index, element) {
+      if (answerSubmitted) return;
+      
+      selectedAnswer = index;
+      document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+      element.classList.add('selected');
+      
+      document.getElementById('submitBtn').classList.remove('hidden');
+    }
+
+    function submitAnswer() {
+      if (answerSubmitted || selectedAnswer === null) return;
+      
+      const question = currentQuestions[currentQuestionIndex];
+      if (!question) {
+        console.error('Question not found');
+        return;
+      }
+      
+      answerSubmitted = true;
+
+      const isCorrect = selectedAnswer === question.correct;
+      
+      if (isCorrect) {
+        score++;
+      }
+
+      const options = document.querySelectorAll('.option');
+      options.forEach((opt, index) => {
+        opt.classList.add('disabled');
+        if (index === question.correct) {
+          opt.classList.add('correct');
+        } else if (index === selectedAnswer && !isCorrect) {
+          opt.classList.add('incorrect');
+        }
+      });
+
+      const feedback = document.getElementById('feedback');
+      if (feedback) {
+        feedback.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+        feedback.innerHTML = `
+          <div class="feedback-title">
+            <span class="feedback-icon">${isCorrect ? '✅' : '❌'}</span>
+            ${isCorrect ? 'Correct' : 'Incorrect'}
+          </div>
+        `;
+        feedback.classList.remove('hidden');
+      }
+      
+      const submitBtn = document.getElementById('submitBtn');
+      if (submitBtn) submitBtn.classList.add('hidden');
+      
+      const nextBtn = document.getElementById('nextBtn');
+      if (nextBtn) {
+        nextBtn.classList.remove('hidden');
+        // Focus next button so user can press Enter to continue
+        setTimeout(() => nextBtn.focus(), 100);
+      }
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      
+      if (currentQuestionIndex < currentQuestions.length) {
+        showQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      const questionScreen = document.getElementById('questionScreen');
+      const resultsScreen = document.getElementById('resultsScreen');
+      
+      if (questionScreen) questionScreen.classList.add('hidden');
+      if (resultsScreen) resultsScreen.classList.remove('hidden');
+      
+      const totalQuestions = currentQuestions.length || 1;
+      const percentage = Math.round((score / totalQuestions) * 100);
+      
+      const scoreEl = document.getElementById('score');
+      const correctCountEl = document.getElementById('correctCount');
+      const totalCountEl = document.getElementById('totalCount');
+      
+      if (scoreEl) scoreEl.textContent = percentage + '%';
+      if (correctCountEl) correctCountEl.textContent = score;
+      if (totalCountEl) totalCountEl.textContent = currentQuestions.length;
+    }
+
+    function restartQuiz() {
+      const resultsScreen = document.getElementById('resultsScreen');
+      const startScreen = document.getElementById('startScreen');
+      
+      if (resultsScreen) resultsScreen.classList.add('hidden');
+      if (startScreen) startScreen.classList.remove('hidden');
+      
+      // Reset state
+      currentQuestions = [];
+      currentQuestionIndex = 0;
+      score = 0;
+      selectedAnswer = null;
+      answerSubmitted = false;
+    }
+  </script>
+</body>
+</html>
